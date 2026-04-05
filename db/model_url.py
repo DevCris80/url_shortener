@@ -9,6 +9,6 @@ class URL(Base):
     id = Column(Integer, primary_key=True, index=True)
     long_url = Column(String, index=True)
     short_url = Column(String, index=True)
-    is_active = Column(Boolean, default=True)
     clicks = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
