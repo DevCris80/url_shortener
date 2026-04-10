@@ -11,11 +11,6 @@ from db.model_url import URL
 router = APIRouter()
 shortener = Shortener()
 
-@router.get("/urls")
-async def list_url(db: AsyncSession = Depends(get_database)):
-    list_url_db = await db.execute(select(URL).limit(10))
-    return list_url_db.scalars().all()
-
 @router.post("/shortener")
 async def shorten_url(url: URLCreate, db: AsyncSession = Depends(get_database)):
     try:
@@ -23,6 +18,12 @@ async def shorten_url(url: URLCreate, db: AsyncSession = Depends(get_database)):
     except ValueError:
         raise HTTPException(400, detail='Not possible')
     return {"short_url": short_url}
+
+@router.get("/urls")
+async def list_url(db: AsyncSession = Depends(get_database)):
+    list_url_db = await db.execute(select(URL).limit(10))
+    return list_url_db.scalars().all()
+
         
 @router.get("/{short_url}")
 async def get_original_url(short_url: str, db: AsyncSession = Depends(get_database)):
