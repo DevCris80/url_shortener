@@ -1,0 +1,20 @@
+- [ ] **1. Corrección de Lógica (Bugs)**
+  - [ ] En `service/shorten.py`, corregir el método `short_url`. Actualmente chequea si el `long_url` no existe con `_url_exists`. Lo correcto sería:
+    - Si el `long_url` ya existe para ese usuario, devolver el `short_url` ya creado.
+    - Cuando se genera un `short_url` aleatorio, verificar que ese *short_url* no exista ya en la base de datos para evitar colisiones (en lugar de verificar el long_url).
+  - [ ] En `db/model_url.py`, añadir `unique=True` a la columna `short_url` para asegurar que no haya repetidos a nivel de base de datos.
+- [ ] **2. Sistema de Autenticación y Usuarios**
+  - [ ] Instalar librerías necesarias para seguridad (`passlib`, `python-jose` o similar).
+  - [ ] Configurar lecturas de secretos (`SECRET_KEY`, `ALGORITHM`) en `core/config.py`.
+  - [ ] Implementar registro de usuario (con encripción de contraseña).
+  - [ ] Implementar un endpoint `/login` para obtener el token JWT.
+  - [ ] Completar la función `get_current_user` en `routes/deps.py` decodificando el JWT.
+- [ ] **3. Relacionar URLs con Usuarios**
+  - [ ] Exigir que el creador esté autenticado `user = Depends(get_current_user)` en `POST /shortener`.
+  - [ ] Asignar el `user_id` del creador al nuevo `URL`.
+  - [ ] Modificar `GET /urls` para que devuelva solo los enlaces pertenecientes al usuario activo.
+- [ ] **4. Validación y Mejoras Menores**
+  - [ ] Añadir validación de URL en `schemas/url.py` usando `pydantic.HttpUrl` para asegurar formato válido HTTPS/HTTP.
+  - [ ] Añadir endpoints para permitir a los usuarios eliminar (DELETE) y/o actualizar URLs existentes.
+- [ ] **5. Testing**
+  - [ ] Completar baterías de pruebas de integración con `httpx.AsyncClient` documentando toda la nueva lógica en `test_api.py`.
