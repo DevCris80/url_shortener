@@ -1,6 +1,7 @@
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 from db.base import Base
+import db.model_url
 from core.config import settings
 
 async def init_db():
