@@ -12,7 +12,7 @@ shortener = Shortener()
 @router.post("/shortener", response_model=URLResponse)
 async def shorten_url(url: URLCreate, db: AsyncSession = Depends(get_database)):
     try:
-        short_url = await shortener.short_url(db, str(url.long_url))
+        short_url = await shortener.short_url(db, url)
         return short_url
     except ValueError:
         raise HTTPException(400, detail='Not possible')
