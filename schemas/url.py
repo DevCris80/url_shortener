@@ -1,5 +1,5 @@
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, ConfigDict
 from datetime import datetime
 
 class URLCreate(BaseModel):
@@ -14,7 +14,7 @@ class URLInfo(URLResponse):
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 class URLUpdate(BaseModel):
     long_url: HttpUrl | None = None

@@ -2,5 +2,5 @@
 
 - [ ] Repositorio CRUD
 - [ ] access-token endpoint
-- [ ] OAuth2PasswordBearer
+- [X] OAuth2PasswordBearer
 - [ ] get_current_user dependency

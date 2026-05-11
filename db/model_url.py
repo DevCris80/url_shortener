@@ -33,3 +33,4 @@ class User(Base):
         back_populates="user", 
         cascade= "all, delete-orphan"
     )
+    is_active: Mapped[bool] = mapped_column(default=True)

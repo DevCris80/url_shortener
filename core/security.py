@@ -8,7 +8,7 @@ from pwdlib.hashers.bcrypt import BcryptHasher
 
 from core.config import settings
 
-password_hash = PasswordHash(Argon2Hasher())
+password_hash = PasswordHash(Argon2Hasher(), BcryptHasher())
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     expire = datetime.now(timezone.utc) + expires_delta
@@ -16,12 +16,9 @@ def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
-
-def verify_password(
-    plain_password: str, hashed_password: str
-) -> tuple[bool, str | None]:
+def verify_password(plain_password: str, hashed_password: str) -> tuple[bool, str | None]:
     return password_hash.verify_and_update(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    return password_hash.hash(password)
+    return password_hash.hash(password)    
