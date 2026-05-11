@@ -8,7 +8,7 @@ from pwdlib.hashers.bcrypt import BcryptHasher
 
 from core.config import settings
 
-password_hash = PasswordHash(Argon2Hasher(), BcryptHasher())
+password_hash = PasswordHash(hashers=[Argon2Hasher(), BcryptHasher()])
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
     expire = datetime.now(timezone.utc) + expires_delta
