@@ -4,6 +4,7 @@ from datetime import datetime
 
 class URLCreate(BaseModel):
     long_url: HttpUrl
+    user_id: int
 
 class URLResponse(URLCreate):
     short_url: str
@@ -11,6 +12,7 @@ class URLResponse(URLCreate):
 
 class URLInfo(URLResponse):
     id: int
+    user_id: int
     created_at: datetime
     updated_at: datetime
 
