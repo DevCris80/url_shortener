@@ -10,6 +10,8 @@ from fastapi.security import OAuth2PasswordBearer
 from db.model_url import User
 from db.session import get_db
 from core.config import settings
+from service.user import UserService as UserServiceClass
+from service.shorten import Shortener as ShortenerClass
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/access-token")
 
@@ -34,3 +36,6 @@ async def get_current_user(session: SessionDep, token: TokenDep) -> User:
     return user
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+UserServiceDep = Annotated[UserServiceClass, Depends(lambda: UserServiceClass())]
+ShortenerDep = Annotated[ShortenerClass, Depends(lambda: ShortenerClass())]
