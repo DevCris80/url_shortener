@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.base import Base
+from app.db.base import Base
 
 class URL(Base):
     __tablename__ = "urls"
