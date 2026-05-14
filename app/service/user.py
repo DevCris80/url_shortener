@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from db.model_url import User
-from core.security import verify_password
+from app.db.model_url import User
+from app.core.security import verify_password
 
 
 class UserService:
