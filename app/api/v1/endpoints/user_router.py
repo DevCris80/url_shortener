@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from routes.deps import CurrentUser
+from app.api.deps import CurrentUser
 
 router = APIRouter()
 
