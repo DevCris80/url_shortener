@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.url import URLCreate, URLInfo, URLResponse
-from routes.deps import get_database, CurrentUser, UserServiceDep
-from service.shorten import Shortener
+from app.schemas.url import URLCreate, URLInfo, URLResponse
+from app.api.deps import get_database, CurrentUser, UserServiceDep
+from app.service.shorten import Shortener
 
 router = APIRouter()
 shortener = Shortener()
