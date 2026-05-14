@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import random
 
-from db.model_url import URL
-from schemas.url import URLCreate
+from app.db.model_url import URL
+from app.schemas.url import URLCreate
 
 
 class Shortener:
