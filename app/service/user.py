@@ -2,8 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.schemas.user import UserCreate
 from app.db.model_url import User
-from app.core.security import verify_password
+from app.core.security import verify_password, get_password_hash
+from app.exceptions import user_exceptions
 
 
 class UserService:
@@ -11,6 +13,23 @@ class UserService:
         self.DUMMY_PASSWORD_HASH = (
             "$argon2id$v=19$m=65536,t=3,p=4$ZGFtbXlTYWx0$ZGFtbXlIYXNo"
         )
+
+    async def create_user(self, new_user: UserCreate, db: AsyncSession):
+        existing_user = await self.get_user_by_email(email=new_user.email, db=db)
+        if existing_user:
+            raise user_exceptions.UserAlreadyExistsError(field= "email", value=new_user.email)
+        
+        pasword_hash_user = get_password_hash(new_user.password)
+        db_user = User(
+            **new_user,
+            pasword_hash = pasword_hash_user
+        )
+
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        return db_user
+        
 
     async def get_user_by_id(self, user_id: int, db: AsyncSession):
         return await db.get(User, user_id)
