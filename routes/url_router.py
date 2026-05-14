@@ -3,14 +3,14 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas.url import URLCreate, URLInfo, URLResponse
-from routes.deps import get_database
+from routes.deps import get_database, CurrentUser, UserServiceDep
 from service.shorten import Shortener
 
 router = APIRouter()
 shortener = Shortener()
 
 @router.post("/shortener", response_model=URLResponse)
-async def shorten_url(url: URLCreate, db: AsyncSession = Depends(get_database)):
+async def shorten_url(url: URLCreate, current_user: CurrentUser, db: AsyncSession = Depends(get_database)):
     try:
         short_url = await shortener.short_url(db, url)
         return short_url
@@ -18,11 +18,10 @@ async def shorten_url(url: URLCreate, db: AsyncSession = Depends(get_database)):
         raise HTTPException(400, detail='Not possible')
 
 @router.get("/urls", response_model=list[URLInfo])
-async def list_url(db: AsyncSession = Depends(get_database)):
-    list_url_db = await shortener.list_urls(db)
-    return list_url_db
+async def list_url(user_service: UserServiceDep, current_user: CurrentUser, db: AsyncSession = Depends(get_database)):
+    urls = await user_service.get_url_user(current_user.id, db)
+    return urls
 
-        
 @router.get("/{short_url}")
 async def get_original_url(short_url: str, db: AsyncSession = Depends(get_database)):
     long_url = await shortener.get_original_url(db, short_url)
