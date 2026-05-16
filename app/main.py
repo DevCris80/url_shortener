@@ -1,20 +1,17 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+
 from app.api.v1.api import api_router
-from app.db.session import engine
-from app.db.base import Base
-import app.db.model_url
+from app.core.database import engine
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
     yield
     await engine.dispose()
 
 def get_application() -> FastAPI:
     application = FastAPI(
-        title="URL Shortener API", 
+        title="URL Shortener API",
         version="1.0.0",
         lifespan=lifespan
     )
