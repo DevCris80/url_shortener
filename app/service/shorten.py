@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 import random
 
-from app.db.model_url import URL
+from app.models.url import URL
 from app.schemas.url import URLCreate
 
 
@@ -18,7 +18,7 @@ class Shortener:
         result = await db.execute(select(URL).where(URL.short_url == str(short_url)))
         return result.scalar_one_or_none()
 
-    async def short_url(self, db: AsyncSession, url_create: URLCreate) -> URL:
+    async def short_url(self, url_create: URLCreate, user_id: int, db: AsyncSession) -> URL:
         existing_url = await self._long_url_exists(db, str(url_create.long_url))
         if existing_url:
             return existing_url
@@ -26,7 +26,7 @@ class Shortener:
         for _ in range(10): 
             short_url = ''.join(random.choices(self.CHARACTERS, k=self.SHORT_URL_LENGTH))
             if not await self._short_url_exists(db, short_url):
-                new_url = URL(long_url=str(url_create.long_url), short_url=short_url, user_id=url_create.user_id)
+                new_url = URL(long_url=str(url_create.long_url), short_url=short_url, user_id=user_id)
                 db.add(new_url)
                 await db.commit()
                 await db.refresh(new_url)
