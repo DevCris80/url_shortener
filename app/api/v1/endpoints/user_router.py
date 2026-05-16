@@ -13,11 +13,11 @@ async def create_user(
     user_service: UserServiceDep
 ):
     try:
-        return user_service.create_user(user, db)
+        return await user_service.create_user(user, db)
     except user_exceptions.UserAlreadyExistsError as e:
         raise HTTPException(status_code=409, detail="User already exists")
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Error in create user")
+        raise HTTPException(status_code=400, detail=f"Error in create user: {str(e)}")
 
 @router.get("/me")
 async def read_user_me(current_user: CurrentUser):
