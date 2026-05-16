@@ -1,9 +1,10 @@
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.schemas.user import UserCreate
-from app.db.model_url import User
+from app.models.user import User
 from app.core.security import verify_password, get_password_hash
 from app.exceptions import user_exceptions
 
@@ -17,25 +18,33 @@ class UserService:
     async def create_user(self, new_user: UserCreate, db: AsyncSession):
         existing_user = await self.get_user_by_email(email=new_user.email, db=db)
         if existing_user:
-            raise user_exceptions.UserAlreadyExistsError(field= "email", value=new_user.email)
+            raise user_exceptions.UserAlreadyExistsError(field="email", value=new_user.email)
         
-        pasword_hash_user = get_password_hash(new_user.password)
+        password_hash_user = get_password_hash(new_user.password)
         db_user = User(
-            **new_user,
-            pasword_hash = pasword_hash_user
+            **new_user.model_dump(exclude={"password"}),
+            password_hash=password_hash_user
         )
 
         db.add(db_user)
-        await db.commit()
-        await db.refresh(db_user)
-        return db_user
+        
+        try:
+            await db.commit()
+            await db.refresh(db_user)
+            return db_user
+            
+        except IntegrityError:
+            await db.rollback()
+            raise user_exceptions.UserAlreadyExistsError(field="email", value=new_user.email)
         
 
     async def get_user_by_id(self, user_id: int, db: AsyncSession):
         return await db.get(User, user_id)
 
     async def get_user_by_email(self, email: str, db: AsyncSession):
-        return await db.query(User).filter(User.email == email).first()
+        query = select(User).where(User.email == email)
+        result = await db.execute(query)
+        return result.scalar_one_or_none()
 
     async def authenticate_user(self, email: str, password: str, db: AsyncSession):
         user = await self.get_user_by_email(email, db)
