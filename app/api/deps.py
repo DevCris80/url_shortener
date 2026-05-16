@@ -7,19 +7,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
-from app.db.model_url import User
-from app.db.session import get_db
+from app.models.user import User
+from app.core.database import get_db
 from app.core.config import settings
 from app.service.user import UserService as UserServiceClass
 from app.service.shorten import Shortener as ShortenerClass
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/access-token")
 
-async def get_database():
-    async for db in get_db():
-        yield db
 
-SessionDep = Annotated[AsyncSession, Depends(get_database)]
+SessionDep = Annotated[AsyncSession, Depends(get_db)]
 TokenDep = Annotated[str, Depends(oauth2_scheme)]
 
 async def get_current_user(session: SessionDep, token: TokenDep) -> User:
