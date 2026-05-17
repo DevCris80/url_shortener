@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.service.user import UserService as UserServiceClass
 from app.service.shorten import Shortener as ShortenerClass
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/access-token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login/access-token")
 
 
 SessionDep = Annotated[AsyncSession, Depends(get_db)]
