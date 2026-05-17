@@ -5,7 +5,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.core.config import settings
 
-
 def _build_url(url: str) -> str:
     """Asegura el driver correcto para asyncpg."""
     return (
@@ -34,7 +33,6 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False, 
     autocommit=False, 
 )
-
 
 class Base(DeclarativeBase):
     pass
