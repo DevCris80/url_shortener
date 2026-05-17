@@ -11,7 +11,7 @@ from app.core.config import settings
 password_hash = PasswordHash(hashers=[Argon2Hasher(), BcryptHasher()])
 
 def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
-    expire = datetime.now(timezone.utc) + expires_delta
+    expire = datetime.now(timezone.utc)  + timedelta(expires_delta)
     to_encode = {"exp": expire, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
